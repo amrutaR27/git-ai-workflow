@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  agent_api:
+    build: .
+    container_name: ai_agent_service
+    # Map port 8000 on your Mac to port 8000 in the container
+    ports:
+      - "8000:8000"
+    # Pass your secrets from the .env file to the container
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    # Enable the container to resolve 'host.docker.internal' to your Mac's IP
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Mount your local folder so changes sync without restarting Docker
+    volumes:
+      - .:/app
