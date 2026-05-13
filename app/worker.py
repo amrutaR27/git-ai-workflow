@@ -1,3 +1,4 @@
+# Logic: Fetches diff, calls AI, posts comment
 import os, requests, boto3, json
 
 def run_agentic_workflow(data):
