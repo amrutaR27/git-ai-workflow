@@ -1,4 +1,3 @@
-# FastAPI: Receives the Webhook
 import os, hmac, hashlib
 from fastapi import FastAPI, Request, Header, HTTPException, BackgroundTasks
 from .worker import run_agentic_workflow
@@ -15,14 +14,20 @@ async def github_webhook(
     x_hub_signature_256: str = Header(None)
 ):
     payload = await request.body()
+    
     # Verify signature
     signature = hmac.new(SECRET, payload, hashlib.sha256).hexdigest()
     if not hmac.compare_digest(f"sha256={signature}", x_hub_signature_256):
+        print("⚠️ [WEBHOOK] Signature verification failed!")
         raise HTTPException(status_code=403, detail="Invalid signature")
 
     data = await request.json()
-    if data.get("action") == "opened":
-        # Process in background so GitHub doesn't timeout
+    action = data.get("action")
+    print(f"📥 [WEBHOOK] Received webhook event with action: '{action}'")
+
+    # Treat "opened" (first creation) and "synchronize" (new commits pushed) as execution triggers
+    if action in ["opened", "synchronize"]:
+        print(f"🕒 [WEBHOOK] Handing off PR #{data['pull_request']['number']} to background process")
         background_tasks.add_task(run_agentic_workflow, data)
         
     return {"status": "accepted"}
