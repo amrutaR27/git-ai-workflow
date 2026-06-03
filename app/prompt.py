@@ -1,4 +1,4 @@
-# The "System Message" for the AI
+# The "System Messages" for the AI
 
 # System instructions and templates for the AI Agent
 #
