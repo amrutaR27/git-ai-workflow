@@ -6,7 +6,7 @@ def run_agentic_workflow(data):
     pr_num = data["pull_request"]["number"]
     token = os.getenv("GITHUB_TOKEN")
     
-    # 1. Get the Diff
+    # 1. Get the Diff from main
     diff = requests.get(
         f"https://api.github.com/repos/{repo}/pulls/{pr_num}",
         headers={"Authorization": f"token {token}", "Accept": "application/vnd.github.v3.diff"}
